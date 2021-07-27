@@ -3,10 +3,10 @@ package models
 import "time"
 
 type Activity struct {
-	activity_id uint `gorm:"primaryKey"`
-	project_id  uint
-	user_id     uint
-	start_time  time.Time
-	end_time    time.Time
-	total_time  time.Time
+	Activity_id uint `gorm:"primaryKey"`
+	Project_id  uint
+	User_id     uint
+	Start_time  time.Time
+	End_time    time.Time
+	Total_time  time.Time
 }

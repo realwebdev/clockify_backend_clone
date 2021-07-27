@@ -7,16 +7,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //Gorm postgres dialect interface
-	"github.com/joho/godotenv"
-	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
 func ConnectDB() *gorm.DB {
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	dialect := os.Getenv("DIALECT")
 	host := os.Getenv("HOST")
@@ -38,16 +31,6 @@ func ConnectDB() *gorm.DB {
 	}
 
 	defer db.Close()
-	var (
-		user1 = &models.User{user_id: 1, username: "haseeb", email: "haseeb@shalan@sasketchwan.com", password: "password"}
-	)
-	// Loading enviroment variables
-
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Project{})
-	db.AutoMigrate(&models.Activity{})
-
-	db.Create(user1)
 
 	return db
 
