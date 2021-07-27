@@ -11,6 +11,7 @@ func DataCreate() {
 	conf.LoadEnvVar()
 
 	db := database.ConnectDB()
+	defer db.Close()
 
 	// var user1 models.User
 	// user1 [] = {user_id: 1, username: "haseeb", email: "haseeb@shalan@sasketchwan.com", password: "password"}
