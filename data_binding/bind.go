@@ -1,13 +1,14 @@
 package databinding
 
 import (
+	"github.com/realwebdev/Bilal/clockify3/conf"
 	"github.com/realwebdev/Bilal/clockify3/database"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
-func dataCreate() {
+func DataCreate() {
 
-	conf.env_varr()
+	conf.LoadEnvVar()
 
 	db := database.ConnectDB()
 
