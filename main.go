@@ -1,59 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/realwebdev/Bilal/clockify3/conf"
+	"github.com/realwebdev/Bilal/clockify3/database"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
 func main() {
+	conf.LoadEnvVar()
+	db := database.ConnectDB()
+	defer db.Close()
+	//models.CreateSchema(db)
 
-	// Database connection string
-	//give
+	//models.SignUp(models.User{Username: "zaseeb", Email: "kkskitchawn@gmail.com", Password: "mypass2"}, db)
+	//models.SignIn("kkskitchawn@gmail.com", "mypass2", db)
+	//models.UserDeletion("kkskitchawn@gmail.com", db)
 
-	log.Println("Clockify")
-	var op string
-	fmt.Println(`Signup = a        SignIn = b`)
-	fmt.Scanln(&op)
+	// models.CreateProject(models.Project{Project_name: "MYFirstProj"}, db)
+	//models.DeleteProject("MYFirstProj", db)
+	//models.UpdateProject("newname1234", "newname123455", db)
 
-	var (
-		id       uint
-		username string
-		email    string
-		password string
-	)
-	switch {
-
-	case op == "a":
-
-		fmt.Println("Enter ID")
-
-		fmt.Scanln(id)
-		fmt.Println("Enter username")
-
-		fmt.Scanln(username)
-		fmt.Println("Enter unique email")
-
-		fmt.Scanln(email)
-		fmt.Println("Enter password")
-
-		fmt.Scanln(password)
-
-		// p1:= models.SignUp(1, "haseeb", "haseeb@email1.com", "password1")
-
-		models.SignUp(models.User{User_id: id, Username: username, Email: email, Password: password})
-
-	case op == "b":
-		fmt.Println("Enter  email")
-
-		fmt.Scanln(email)
-		fmt.Println("Enter password")
-
-		fmt.Scanln(password)
-		models.SignIn(email, password)
-
-	}
+	models.CreateActivity(models.Activity{Activity_name: "MYFirsActivity4", Start_time: time.Now(), End_time: time.Now().Add(time.Minute * 10), Total_time: time.Now().Add(time.Minute * 10)}, db)
+	// models.DeleteActivity("MYFirstActivity", db)
+	// models.UpdateActivity("MYFirstActivity", "2nd ACtivity", db)
 
 }
