@@ -7,39 +7,38 @@ import (
 )
 
 type User struct {
-	Projects []Project  `gorm:"foreignKey:User"`
-	Activity []Activity `gorm:"foreignKey:User"`
-
-	User_id  uint `gorm:"primaryKey; autoIncrement:true"`
-	Username string
-	Email    string `gorm:"typevarchar(100);unique_index"`
-	Password string
+	Projects  []Project  //`gorm:"foreignKey:UserID"`
+	Activitys []Activity //`gorm:"foreignKey:UserID"`
+	ID        uint
+	Username  string
+	Email     string `gorm:"typevarchar(100);unique_index"`
+	Password  string
 }
 
-func CreateSchema(db *gorm.DB) {
-	db.AutoMigrate(User{})
-	db.AutoMigrate(Project{})
-	db.AutoMigrate(Activity{})
-}
+func SignUp(user User, db *gorm.DB) {
+	if err := db.Create(&user).Error; err != nil {
+		log.Print("Error occured While creating the user in DB!")
 
-func SignUp(user1 User, db *gorm.DB) {
-	if err := db.Create(user1).Error; err != nil {
-		log.Print("wrong username or password")
+		return
 	}
 	log.Print("your account has been created")
 }
 
-func SignIn(email string, pass string, db *gorm.DB) {
-	var user User
+func SignIn(email, pass string, db *gorm.DB) {
+	user := User{}
 	if err := db.Where(&User{Email: email, Password: pass}).First(&user).Error; err != nil {
-		log.Print("this user not exist")
+		log.Print("Error occured while SignIn")
+
+		return
 	}
-	log.Print("SgnedIn")
+	log.Print("User SignedIn")
 }
 
 func UserDeletion(email string, db *gorm.DB) {
 	if err := db.Where("Email LIKE ?", email).Delete(User{}).Error; err != nil {
-		log.Print("account not exist")
+		log.Print("Error OCcured in user deletion")
+
+		return
 	}
-	log.Print("account successfully deleted")
+	log.Print("user deleted")
 }
