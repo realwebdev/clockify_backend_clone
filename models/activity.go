@@ -37,8 +37,8 @@ func CreateActivity(activity Activity, db *gorm.DB) {
 // 	//return total time of activity
 // }
 
-func DeleteActivity(actname string, db *gorm.DB) {
-	if err := db.Where("Activity_name LIKE ?", actname).Delete(Activity{}).Error; err != nil {
+func DeleteActivity(activityid uint, db *gorm.DB) {
+	if err := db.Where("ID LIKE ?", activityid).Delete(Activity{}).Error; err != nil {
 		log.Print("Error occured activity does not exist in DB!")
 
 		return

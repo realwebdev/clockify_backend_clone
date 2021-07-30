@@ -31,8 +31,8 @@ func UpdateProject(old_name string, name_update string, db *gorm.DB) {
 	log.Print("Project successfully updated ")
 }
 
-func DeleteProject(projname string, db *gorm.DB) {
-	if err := db.Where("Project_name LIKE ?", projname).Delete(Project{}).Error; err != nil {
+func DeleteProject(projid uint, db *gorm.DB) {
+	if err := db.Where("ID LIKE ?", projid).Delete(Project{}).Error; err != nil {
 		log.Print("Error occured while deleting Project!")
 
 		return

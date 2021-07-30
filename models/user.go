@@ -34,8 +34,8 @@ func SignIn(email, pass string, db *gorm.DB) {
 	log.Print("User SignedIn")
 }
 
-func UserDeletion(email string, db *gorm.DB) {
-	if err := db.Where("Email LIKE ?", email).Delete(User{}).Error; err != nil {
+func UserDeletion(id uint, db *gorm.DB) {
+	if err := db.Where("ID LIKE ?", id).Delete(User{}).Error; err != nil {
 		log.Print("Error OCcured in user deletion")
 
 		return
