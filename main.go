@@ -4,6 +4,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/realwebdev/Bilal/clockify3/conf"
 	"github.com/realwebdev/Bilal/clockify3/database"
+	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 
 	// models.CreateProject(models.Project{Project_name: "MYFirstProj3"}, db)
 	//models.DeleteProject(2, db)
-	//models.UpdateProject("newname1234", "newname123455", db)
+	models.UpdateProject(1, "newname123455", db)
 
 	// models.CreateActivity(models.Activity{Activity_name: "MYFirsActivity4", Start_time: time.Now(), End_time: time.Now().Add(time.Minute * 10), Total_time: time.Now().Add(time.Minute * 10)}, db)
 	// models.DeleteActivity(4, db)
