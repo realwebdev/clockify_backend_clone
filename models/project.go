@@ -30,7 +30,7 @@ func UpdateProject(project_id uint, update_name interface{}, db *gorm.DB) {
 }
 
 func DeleteProject(project_id uint, db *gorm.DB) {
-	if err := db.Table("Project").Where("ID = ?", project_id).Delete(Project{}).Error; err != nil {
+	if err := db.Table("projects").Where("ID = ?", project_id).Delete(Project{}).Error; err != nil {
 		log.Print("Error occured while deleting Project!")
 		return
 	}
