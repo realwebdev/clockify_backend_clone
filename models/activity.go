@@ -34,7 +34,7 @@ func EndActivity(activity_id uint, endtime interface{}, db *gorm.DB) {
 
 }
 
-func TotalActivitytime(activity_id uint, st, et time.Time, db *gorm.DB) {
+func TotalActivitytime(activity_id uint, db *gorm.DB) {
 	// activity := Activity{}
 	// st := db.Where(map[string]interface{}{"ID": activity_id}).First(activity.Start_time)
 	// if st != nil {
@@ -46,7 +46,7 @@ func TotalActivitytime(activity_id uint, st, et time.Time, db *gorm.DB) {
 	// 	log.Print("Error occured while updating activity end time!")
 	// 	return
 	// }
-	difference := et.Sub(ti)
+	difference := et.Sub(st)
 	tt := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"total_time": difference})
 	if tt != nil {
 		log.Print("Error occured while updating activity end time!")
