@@ -14,7 +14,7 @@ type Activity struct {
 	Activity_name string
 	Start_time    time.Time
 	End_time      time.Time
-	Total_time    time.Time
+	Total_time    time.Duration
 }
 
 func CreateStartActivity(activity Activity, db *gorm.DB) {
@@ -25,33 +25,21 @@ func CreateStartActivity(activity Activity, db *gorm.DB) {
 	log.Print("your activity has been created")
 }
 
-func EndActivity(activity_id uint, endtime interface{}, db *gorm.DB) {
-	if err := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"end_time": endtime}).Error; err != nil {
-		log.Print("Error occured while updating activity end time!")
+func EndActivity(activity_id uint, db *gorm.DB) {
+	activity := Activity{}
+	if err := db.Table("activities").Where("ID = ?", activity_id).First(&activity).Error; err != nil {
+		log.Print("Error occured while query total activity time!")
 		return
 	}
-	log.Print("Successfully updated end of activity in DB")
 
-}
-
-func TotalActivitytime(activity_id uint, db *gorm.DB) {
-	// activity := Activity{}
-	// st := db.Where(map[string]interface{}{"ID": activity_id}).First(activity.Start_time)
-	// if st != nil {
-	// 	log.Print("Error occured while updating activity end time!")
-	// 	return
-	// }
-	// et := db.Where(map[string]interface{}{"ID": activity_id}).First(activity.End_time)
-	// if et != nil {
-	// 	log.Print("Error occured while updating activity end time!")
-	// 	return
-	// }
-	difference := et.Sub(st)
-	tt := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"total_time": difference})
-	if tt != nil {
-		log.Print("Error occured while updating activity end time!")
+	starttime := activity.Start_time
+	endTime := time.Now()
+	difference := endTime.Sub(starttime)
+	if err := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"total_time": difference, "end_time": endTime}).Error; err != nil {
+		log.Print("Error occured while updating total time!")
 		return
 	}
+	log.Print("Successfully updated total time of activity in DB")
 	log.Print(difference)
 }
 
@@ -63,7 +51,7 @@ func DeleteActivity(activityid uint, db *gorm.DB) {
 	log.Print("Activity successfully deleted from DB")
 }
 
-func UpdateActivity(activity_id uint, new_name interface{}, db *gorm.DB) {
+func UpdateActivity(activity_id uint, new_name string, db *gorm.DB) {
 	if err := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"activity_name": new_name}).Error; err != nil {
 		log.Print("Error occured while updating activity!")
 		return

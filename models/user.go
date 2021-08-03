@@ -25,7 +25,7 @@ func SignUp(user User, db *gorm.DB) {
 
 func SignIn(email, pass string, db *gorm.DB) {
 	user := User{}
-	if err := db.Where(&User{Email: email, Password: pass}).First(&user).Error; err != nil {
+	if err := db.Table("users").Where(map[string]interface{}{"email": email, "password": pass}).Find(&user).Error; err != nil {
 		log.Print("Error occured while SignIn")
 		return
 	}

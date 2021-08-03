@@ -15,6 +15,7 @@ func AutoMigrate(modelObject interface{}, db *gorm.DB) error {
 		return err
 	}
 	log.Print("Previous Table drop successfully")
+
 	if err := db.AutoMigrate(modelObject).Error; err != nil {
 		return err
 	}
