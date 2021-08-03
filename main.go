@@ -18,7 +18,7 @@ func main() {
 	// models.SignIn("kkskitchawn@gmail.com5", "mypass2", db)
 	//  models.UserDeletion(1, db)
 
-	// models.CreateProject(models.Project{UserID: 1, Project_name: "MYFirstProj4"}, db)
+	// models.CreateProject(models.Project{UserID: 2, Project_name: "MYFirstProj4"}, db)
 	// models.DeleteProject(2, db)
 	// models.UpdateProject(1, "newnameproject2", db)
 
@@ -26,5 +26,4 @@ func main() {
 	// models.EndActivity(1, db)
 	// models.DeleteActivity(4, db)
 	// models.UpdateActivity(1, "MYFirstActivityChanged", db)
-
 }

@@ -20,6 +20,7 @@ func AutoMigrate(modelObject interface{}, db *gorm.DB) error {
 		return err
 	}
 	log.Print("models created successfully")
+
 	return nil
 }
 
