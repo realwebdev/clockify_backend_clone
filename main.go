@@ -18,9 +18,11 @@ func main() {
 	// models.SignIn("kkskitchawn@gmail.com5", "mypass2", db)
 	//  models.UserDeletion(1, db)
 
-	// models.CreateProject(models.Project{UserID: 2, Project_name: "MYFirstProj4"}, db)
+	// models.CreateProject(models.Project{UserID: 3, Project_name: "MYFirstProj4"}, db)
 	// models.DeleteProject(2, db)
-	// models.UpdateProject(1, "newnameproject2", db)
+	// updates := make(map[string]interface{})
+	// updates["project_name"] = "mynewname"
+	// models.UpdateProject(1, updates, db)
 
 	// models.CreateStartActivity(models.Activity{Activity_name: "MYFirsActivity2", ProjectID: 1, UserID: 1, Start_time: time.Now()}, db)
 	// models.EndActivity(1, db)

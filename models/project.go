@@ -21,8 +21,8 @@ func CreateProject(project Project, db *gorm.DB) {
 	log.Print("project has been created")
 }
 
-func UpdateProject(project_id uint, updates string, db *gorm.DB) {
-	if err := db.Table("projects").Where("ID = ?", project_id).Updates(map[string]interface{}{"project_name": updates}).Error; err != nil {
+func UpdateProject(project_id uint, updates map[string]interface{}, db *gorm.DB) {
+	if err := db.Table("projects").Where("ID = ?", project_id).Updates(updates).Error; err != nil {
 		log.Print("Error occured while updating the project!")
 		return
 	}
