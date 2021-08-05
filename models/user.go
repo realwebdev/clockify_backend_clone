@@ -10,9 +10,9 @@ type User struct {
 	Projects  []Project  //`gorm:"foreignKey:UserID"`
 	Activitys []Activity //`gorm:"foreignKey:UserID"`
 	ID        uint
-	Username  string
-	Email     string `gorm:"typevarchar(100);unique_index"`
-	Password  string
+	Username  string `json:"username"`
+	Email     string `gorm:"typevarchar(100);unique_index" json:"email"`
+	Password  string `json:"password"`
 }
 
 func SignUp(user User, db *gorm.DB) {
@@ -21,6 +21,16 @@ func SignUp(user User, db *gorm.DB) {
 		return
 	}
 	log.Print("your account has been created")
+}
+
+func GetUsers(db *gorm.DB) error {
+	user := User{}
+	if err := db.Find(&user).Error; err != nil {
+		log.Print("error occured while getting user!")
+		return err
+	}
+	log.Print(user)
+	return nil
 }
 
 func SignIn(email, pass string, db *gorm.DB) {
