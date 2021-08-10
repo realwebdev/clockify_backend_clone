@@ -15,37 +15,39 @@ type User struct {
 	Password  string `json:"password"`
 }
 
-func SignUp(user User, db *gorm.DB) {
+func SignUp(user User, db *gorm.DB) error {
 	if err := db.Create(&user).Error; err != nil {
 		log.Print("Error occured While creating the user in DB!")
-		return
-	}
-	log.Print("your account has been created")
-}
-
-func GetUsers(db *gorm.DB) error {
-	user := User{}
-	if err := db.Find(&user).Error; err != nil {
-		log.Print("error occured while getting user!")
 		return err
 	}
-	log.Print(user)
+	log.Print("your account has been created")
 	return nil
 }
 
-func SignIn(email, pass string, db *gorm.DB) {
+func GetUsers(db *gorm.DB) (users []User, err error) {
+	if err := db.Find(&users).Error; err != nil {
+		log.Print("error occured while getting user!")
+		return nil, err
+	}
+	log.Print("These are users in database", users)
+	return users, nil
+}
+
+func SignIn(email, pass string, db *gorm.DB) error {
 	user := User{}
 	if err := db.Table("users").Where(map[string]interface{}{"email": email, "password": pass}).Find(&user).Error; err != nil {
 		log.Print("Error occured while SignIn")
-		return
+		return err
 	}
 	log.Print("User SignedIn")
+	return nil
 }
 
-func UserDeletion(user_id uint, db *gorm.DB) {
+func UserDeletion(user_id uint, db *gorm.DB) error {
 	if err := db.Table("User").Where("ID = ?", user_id).Delete(User{}).Error; err != nil {
 		log.Print("Error occured while deleting user!")
-		return
+		return err
 	}
 	log.Print("user deleted")
+	return nil
 }

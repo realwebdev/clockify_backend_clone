@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"github.com/realwebdev/Bilal/clockify3/controllers"
-	"gorm.io/gorm"
 )
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
@@ -13,9 +13,6 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	router.GET("ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "pong")
 	})
-	user := controllers.GetUsers(db) //error for controllers.GetUsers(db) (no value) used as valuecompilerTooManyValues
-	// too few arguments in call to controllers.GetUserscompilerWrongArgCount
-	router.GET("/users", user)
-
+	router.GET("/getusers", controllers.GetUsers(db))
 	return router
 }
