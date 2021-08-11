@@ -1,8 +1,6 @@
 package models
 
 import (
-	"log"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -17,37 +15,34 @@ type User struct {
 
 func SignUp(user User, db *gorm.DB) error {
 	if err := db.Create(&user).Error; err != nil {
-		log.Print("Error occured While creating the user in DB!")
 		return err
 	}
-	log.Print("your account has been created")
 	return nil
 }
 
 func GetUsers(db *gorm.DB) (users []User, err error) {
 	if err := db.Find(&users).Error; err != nil {
-		log.Print("error occured while getting user!")
 		return nil, err
 	}
-	log.Print("These are users in database", users)
 	return users, nil
 }
 
-func SignIn(email, pass string, db *gorm.DB) error {
-	user := User{}
-	if err := db.Table("users").Where(map[string]interface{}{"email": email, "password": pass}).Find(&user).Error; err != nil {
-		log.Print("Error occured while SignIn")
-		return err
+func SignIn(email, pass string, db *gorm.DB) (string, error) {
+	var user User
+	err := db.Table("users").Where(map[string]interface{}{"email": email, "password": pass}).First(&user).Error
+	if err != nil {
+		return "error occured", err
 	}
-	log.Print("User SignedIn")
-	return nil
+	return user.Username, nil
 }
 
 func UserDeletion(user_id uint, db *gorm.DB) error {
-	if err := db.Table("User").Where("ID = ?", user_id).Delete(User{}).Error; err != nil {
-		log.Print("Error occured while deleting user!")
+	if err := db.Table("users").Where("id = ?", user_id).First(&User{}).Error; err != nil {
 		return err
 	}
-	log.Print("user deleted")
+
+	if err := db.Table("users").Where("id = ?", user_id).Delete(&User{}).Error; err != nil {
+		return err
+	}
 	return nil
 }

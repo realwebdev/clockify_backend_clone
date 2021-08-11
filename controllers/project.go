@@ -1,22 +1,32 @@
 package controllers
 
 import (
-	"log"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
-func CreateProject(project models.Project, db *gorm.DB) gin.HandlerFunc {
+func CreateProject(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := models.CreateProject(project, db)
-		if err != nil {
-			log.Print("error while creating project r", err)
+		var project models.Project
+		if err := c.BindJSON(&project); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "error occured in data binding",
+				"error":   err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, "project  Successfully created r")
+		err := models.CreateProject(project, db)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "error occured creating project",
+				"error":   err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, fmt.Sprintf("project  created %v", project.Project_name))
 	}
 }
 
@@ -24,31 +34,41 @@ func GetProjects(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := models.GetProjects(db)
 		if err != nil {
-			log.Print(err)
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "Project list not found",
+				"error":   err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, users)
 	}
 }
 
-func UpdateProject(project_id uint, updates string, db *gorm.DB) gin.HandlerFunc {
+func UpdateProject(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := models.UpdateProject(project_id, updates, db)
-		if err != nil {
-			log.Print("error while creating project r", err)
+		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
+		id := uint(uintt)
+		update := c.PostForm("update")
+		if err := models.UpdateProject(id, update, db); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "The project does not exist in the database",
+				"error":   err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, "project  Successfully created r")
+		c.JSON(http.StatusOK, fmt.Sprintf(`project name changed to '%v'`, update))
 	}
 }
 
-func DeleteProject(project_id uint, db *gorm.DB) gin.HandlerFunc {
+func DeleteProject(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := models.DeleteProject(project_id, db)
+		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
+		id := uint(uintt)
+		deleteproject, err := models.DeleteProject(id, db)
 		if err != nil {
-			log.Print("error while deleteing project r", err)
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "The project does not exist in the database",
+				"error":   err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, "deleted project successfully r ")
+		c.JSON(http.StatusOK, fmt.Sprintf("project %v  deleted !", deleteproject))
 	}
 }

@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"log"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -13,42 +14,59 @@ func GetUsers(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := models.GetUsers(db)
 		if err != nil {
-			log.Print(err)
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "Error occured while retrieving user list",
+				"error":   err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, users)
 	}
 }
 
-func SignUp(user models.User, db *gorm.DB) gin.HandlerFunc {
+func SignUp(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := models.SignUp(user, db)
-		if err != nil {
-			log.Print(err)
+		user := models.User{}
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "error occured while binding data",
+				"error":   err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, "User Has been Created r")
+		if err := models.SignUp(user, db); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "Error while registering user",
+				"error":   err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, fmt.Sprintf("User created %v", user.Username))
 	}
 }
 
-func SignIn(email, pass string, db *gorm.DB) gin.HandlerFunc {
+func SignIn(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := models.SignIn(email, pass, db)
+		email := c.PostForm("email")
+		pass := c.PostForm("pass")
+		username, err := models.SignIn(email, pass, db)
 		if err != nil {
-			log.Print("error while signIn r", err)
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "user does not exist",
+				"error":   err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, "user Signed In r")
+		c.JSON(http.StatusOK, fmt.Sprintf("signedin %v", username))
 	}
 }
 
-func UserDeletion(user_id uint, db *gorm.DB) gin.HandlerFunc {
+func UserDeletion(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := models.UserDeletion(user_id, db)
-		if err != nil {
-			log.Print("error while user Deletion r", err)
+		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
+		id := uint(uintt)
+		if err := models.UserDeletion(id, db); err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "user does not exist",
+				"error":   err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, "user Deleted Successfully r")
+		c.JSON(http.StatusOK, "user deleted")
 	}
 }

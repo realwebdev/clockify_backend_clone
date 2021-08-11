@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -18,47 +17,47 @@ type Activity struct {
 }
 
 func CreateStartActivity(activity Activity, db *gorm.DB) error {
+	starttime := time.Now()
+	activity.Start_time = starttime
 	if err := db.Create(&activity).Error; err != nil {
-		log.Print("Error Occured while Create the activity in DB!")
 		return err
 	}
-	log.Print("your activity has been created")
 	return nil
 }
 
-func EndActivity(activity_id uint, db *gorm.DB) error {
+func EndActivity(activity_id uint, db *gorm.DB) (time.Duration, error) {
 	activity := Activity{}
 	if err := db.Table("activities").Where("ID = ?", activity_id).First(&activity).Error; err != nil {
-		log.Print("Error occured while query total activity time!")
-		return err
+		return 0, err
 	}
 
 	starttime := activity.Start_time
 	endTime := time.Now()
 	difference := endTime.Sub(starttime)
 	if err := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"total_time": difference, "end_time": endTime}).Error; err != nil {
-		log.Print("Error occured while updating total time!")
-		return err
+		return 0, err
 	}
-	log.Print("Successfully updated total time of activity in DB")
-	log.Print(difference)
-	return nil
+	return difference, nil
 }
 
 func DeleteActivity(activityid uint, db *gorm.DB) error {
-	if err := db.Table("activities").Where("ID=?", activityid).Delete(Activity{}).Error; err != nil {
-		log.Print("Error occured activity does not exist in DB!")
+	if err := db.Table("activities").Where("ID = ?", activityid).First(&Activity{}).Error; err != nil {
 		return err
 	}
-	log.Print("Activity successfully deleted from DB")
+
+	if err := db.Table("activities").Where("ID=?", activityid).Delete(&Activity{}).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
 func UpdateActivity(activity_id uint, new_name string, db *gorm.DB) error {
-	if err := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"activity_name": new_name}).Error; err != nil {
-		log.Print("Error occured while updating activity!")
+	if err := db.Table("activities").Where("ID = ?", activity_id).First(&Activity{}).Error; err != nil {
 		return err
 	}
-	log.Print("Successfully updated user activity in DB")
+
+	if err := db.Table("activities").Where("ID = ?", activity_id).Updates(map[string]interface{}{"activity_name": new_name}).Error; err != nil {
+		return err
+	}
 	return nil
 }

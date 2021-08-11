@@ -19,9 +19,9 @@ func main() {
 	// database.AutoMigrate(models.User{}, db)
 	// database.AutoMigrate(models.Project{}, db)
 
-	// models.SignUp(models.User{Username: "haseeb", Email: "saskitchawn@gmail.com3", Password: "mypass2"}, db)
+	// models.SignUp(models.User{Username: "haseeb", Email: "saskitchawn@gmail.com3.3", Password: "mypass2"}, db)
 	// models.SignIn("saskitchawn@gmail.com1", "mypass1", db)
-	//  models.UserDeletion(1, db)
+	// models.UserDeletion(1, db)
 
 	// models.CreateProject(models.Project{UserID: 2, Project_name: "MYFirstProj3"}, db)
 	// models.DeleteProject(2, db)
