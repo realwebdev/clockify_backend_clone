@@ -16,7 +16,7 @@ type Activity struct {
 	Total_time    time.Duration `json:"total_time"`
 }
 
-func CreateStartActivity(activity Activity, db *gorm.DB) error {
+func StartActivity(activity Activity, db *gorm.DB) error {
 	starttime := time.Now()
 	activity.Start_time = starttime
 	if err := db.Create(&activity).Error; err != nil {

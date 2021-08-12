@@ -10,16 +10,17 @@ import (
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
-func CreateStartActivity(db *gorm.DB) gin.HandlerFunc {
+func StartActivity(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var activity models.Activity
+		activity := models.Activity{}
 		if err := c.BindJSON(&activity); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "error occured in databinding",
 				"error":   err.Error()})
 			return
 		}
-		if err := models.CreateStartActivity(activity, db); err != nil {
+
+		if err := models.StartActivity(activity, db); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "error occured while creating activity",
 				"error":   err.Error()})

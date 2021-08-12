@@ -28,7 +28,7 @@ func GetUsers(db *gorm.DB) (users []User, err error) {
 }
 
 func SignIn(email, pass string, db *gorm.DB) (string, error) {
-	var user User
+	user := User{}
 	err := db.Table("users").Where(map[string]interface{}{"email": email, "password": pass}).First(&user).Error
 	if err != nil {
 		return "error occured", err

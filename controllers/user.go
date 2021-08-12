@@ -32,6 +32,7 @@ func SignUp(db *gorm.DB) gin.HandlerFunc {
 				"error":   err.Error()})
 			return
 		}
+
 		if err := models.SignUp(user, db); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "Error while registering user",

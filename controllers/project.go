@@ -12,7 +12,7 @@ import (
 
 func CreateProject(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var project models.Project
+		project := models.Project{}
 		if err := c.BindJSON(&project); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "error occured in data binding",

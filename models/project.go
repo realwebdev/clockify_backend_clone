@@ -37,7 +37,7 @@ func UpdateProject(project_id uint, updates string, db *gorm.DB) error {
 }
 
 func DeleteProject(project_id uint, db *gorm.DB) (string, error) {
-	var project Project
+	project := Project{}
 	if err := db.Table("projects").Where("ID = ?", project_id).First(Project{}).Error; err != nil {
 		return "error occured", err
 	}

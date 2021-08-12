@@ -24,7 +24,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	router.POST("/updateproject", controllers.UpdateProject(db))
 	router.DELETE("/deleteproject", controllers.DeleteProject(db))
 
-	router.POST("/createactivity", controllers.CreateStartActivity(db))
+	router.POST("/createactivity", controllers.StartActivity(db))
 	router.POST("/endactivity", controllers.EndActivity(db))
 	router.POST("/updateactivity", controllers.UpdateActivity(db))
 	router.DELETE("/deleteactivity", controllers.DeleteActivity(db))
