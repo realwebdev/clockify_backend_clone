@@ -4,7 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/realwebdev/Bilal/clockify3/conf"
-	"github.com/realwebdev/Bilal/clockify3/database"
 	"github.com/realwebdev/Bilal/clockify3/routers"
 )
 
@@ -12,8 +11,6 @@ var Db gorm.DB
 
 func main() {
 	conf.LoadEnvVar()
-	db := database.ConnectDB()
-	defer db.Close()
 
 	// database.AutoMigrate(models.Activity{}, db)
 	// database.AutoMigrate(models.User{}, db)
@@ -34,6 +31,6 @@ func main() {
 	// models.DeleteActivity(4, db)
 	// models.UpdateActivity(1, "MYFirstActivityChanged", db)
 
-	r := routers.SetupRouter(db)
+	r := routers.SetupRouter()
 	r.Run(":8080")
 }

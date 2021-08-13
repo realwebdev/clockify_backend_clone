@@ -4,30 +4,29 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	"github.com/realwebdev/Bilal/clockify3/controllers"
+	"github.com/realwebdev/Bilal/clockify3/handlers"
 )
 
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func SetupRouter() *gin.Engine {
 	router := gin.Default()
 	router.GET("ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "pong")
 	})
 
-	router.GET("/getusers", controllers.GetUsers(db))
-	router.POST("/signup", controllers.SignUp(db))
-	router.PUT("/signin", controllers.SignIn(db))
-	router.DELETE("/deleteuser", controllers.UserDeletion(db))
+	router.GET("/getusers", handlers.GetUsers())
+	router.POST("/signup", handlers.CreateUser())
+	router.PUT("/signin", handlers.AuthenticateUser())
+	router.DELETE("/deleteuser", handlers.DeleteUser())
 
-	router.GET("/getproject", controllers.GetProjects(db))
-	router.POST("/createproject", controllers.CreateProject(db))
-	router.POST("/updateproject", controllers.UpdateProject(db))
-	router.DELETE("/deleteproject", controllers.DeleteProject(db))
+	router.GET("/getproject", handlers.GetProjects())
+	router.POST("/createproject", handlers.CreateProject())
+	router.POST("/updateproject", handlers.UpdateProject())
+	router.DELETE("/deleteproject", handlers.DeleteProject())
 
-	router.POST("/createactivity", controllers.StartActivity(db))
-	router.POST("/endactivity", controllers.EndActivity(db))
-	router.POST("/updateactivity", controllers.UpdateActivity(db))
-	router.DELETE("/deleteactivity", controllers.DeleteActivity(db))
+	router.POST("/createactivity", handlers.StartActivity())
+	router.POST("/endactivity", handlers.EndActivity())
+	router.POST("/updateactivity", handlers.UpdateActivity())
+	router.DELETE("/deleteactivity", handlers.DeleteActivity())
 
 	return router
 }
