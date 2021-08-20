@@ -3,16 +3,16 @@ package datastore
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type Client struct {
 	Db *gorm.DB
 }
 
-func New(connStr string) (h *Dbhandler, err error) {
-	db, err := GetDbConnection(connStr)
+func New(connStr string) (h DBController, err error) {
+	db, err := ConnectDB(connStr)
 	if err != nil {
 		return nil, err
 	}
@@ -21,15 +21,15 @@ func New(connStr string) (h *Dbhandler, err error) {
 }
 
 func (c *Client) Close() error {
-	db, err := c.Db.DB().Begin()
+	db, err := c.Db.DB()
 	if err != nil {
-		fmt.Println("error creating db object")
+		fmt.Println("error occured")
 	}
 
 	return db.Close()
 }
 
-func GetDbConnection(dbURI string) (*gorm.DB, error) {
+func ConnectDB(dbURI string) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
 	if err != nil {
 		return nil, err

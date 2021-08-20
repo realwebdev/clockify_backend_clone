@@ -6,13 +6,20 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	"github.com/realwebdev/Bilal/clockify3/datastore"
+	"github.com/realwebdev/Bilal/clockify3/auth"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
-func StartActivity(db *gorm.DB) gin.HandlerFunc {
+func StartActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		activity := models.Activity{}
 		if err := c.BindJSON(&activity); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -21,7 +28,7 @@ func StartActivity(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		if err := datastore.StartActivity(activity, db); err != nil {
+		if err := h.DB.StartActivity(activity); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "error occured while creating activity",
 				"error":   err.Error()})
@@ -32,12 +39,20 @@ func StartActivity(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func EndActivity(db *gorm.DB) gin.HandlerFunc {
+func EndActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 64)
 		id := uint(uintt)
 
-		duration, err := datastore.EndActivity(id, db)
+		duration, err := h.DB.EndActivity(id)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "activity not found",
@@ -49,12 +64,20 @@ func EndActivity(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func DeleteActivity(db *gorm.DB) gin.HandlerFunc {
+func DeleteActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 
-		if err := datastore.DeleteActivity(id, db); err != nil {
+		if err := h.DB.DeleteActivity(id); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "activity not found",
 				"error":   err.Error()})
@@ -65,15 +88,23 @@ func DeleteActivity(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func UpdateActivity(db *gorm.DB) gin.HandlerFunc {
+func UpdateActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 		new_name := c.PostForm("newname")
 
 		updates := make(map[string]interface{})
 		updates["activity_name"] = new_name
-		if err := datastore.UpdateActivity(id, updates, db); err != nil {
+		if err := h.DB.UpdateActivity(id, updates); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "activity not found",
 				"error":   err.Error()})

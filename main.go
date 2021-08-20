@@ -1,20 +1,31 @@
 package main
 
 import (
-	"github.com/jinzhu/gorm"
+	"log"
+
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/realwebdev/Bilal/clockify3/conf"
+	"github.com/realwebdev/Bilal/clockify3/datastore"
+	"github.com/realwebdev/Bilal/clockify3/handlers"
 	"github.com/realwebdev/Bilal/clockify3/routers"
 )
 
-var Db gorm.DB
-
 func main() {
-	conf.LoadEnvVar()
+	conf := conf.New()
+	dbhandler, err := datastore.New(conf.ConnStr())
+	if err != nil {
+		log.Fatal("error occured", err.Error())
+	}
+	defer dbhandler.Close()
+	// dbhandler.AutoMigrate(models.Activity{})
+	// dbhandler.AutoMigrate(models.User{})
+	// dbhandler.AutoMigrate(models.Project{})
+	// dbhandler.AutoMigrate(models.Authentication{})
+	// dbhandler.AutoMigrate(models.Token{})
 
-	// database.AutoMigrate(models.Activity{}, db)
-	// database.AutoMigrate(models.User{}, db)
-	// database.AutoMigrate(models.Project{}, db)
+	controller := handlers.New(dbhandler)
+	r := routers.SetupRouter(controller)
+	r.Run(":8080")
 
 	// models.SignUp(models.User{Username: "haseeb", Email: "saskitchawn@gmail.com3.3", Password: "mypass2"}, db)
 	// models.SignIn("saskitchawn@gmail.com1", "mypass1", db)
@@ -31,6 +42,4 @@ func main() {
 	// models.DeleteActivity(4, db)
 	// models.UpdateActivity(1, "MYFirstActivityChanged", db)
 
-	r := routers.SetupRouter()
-	r.Run(":8080")
 }

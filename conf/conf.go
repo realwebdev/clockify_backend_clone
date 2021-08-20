@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -8,34 +9,37 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type envvar struct {
+type Conf struct {
 	DIALECT  string
 	HOST     string
 	DBPORT   string
-	USERNAME string
+	USER     string
+	NAME     string
 	PASSWORD string
+	ACCESS   string
+	REFRESH  string
 }
 
-func LoadEnvVar() {
+func New() *Conf {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading env file", err)
 	}
 
-	ConnectDB()
+	conf := &Conf{}
+	flag.StringVar(&conf.DIALECT, "DIALECT", os.Getenv("DIALECT"), "dialect")
+	flag.StringVar(&conf.HOST, "HOST", os.Getenv("HOST"), "host")
+	flag.StringVar(&conf.DBPORT, "DBPORT", os.Getenv("DBPORT"), "port")
+	flag.StringVar(&conf.USER, "USER", os.Getenv("USER"), "user")
+	flag.StringVar(&conf.NAME, "NAME", os.Getenv("NAME"), "name")
+	flag.StringVar(&conf.PASSWORD, "PASSWORD", os.Getenv("PASSWORD"), "password")
+	flag.StringVar(&conf.ACCESS, "ACCESS", os.Getenv("ACCESS"), "JWT access key")
+	flag.StringVar(&conf.REFRESH, "REFRESH", os.Getenv("REFRESH"), "JWT refresh key")
+
+	return conf
 }
 
-//create constructors
-//also contain func to connect to db
-func ConnectDB() (string, string) {
-	dialect := os.Getenv("DIALECT")
-	host := os.Getenv("HOST")
-	dbPort := os.Getenv("DBPORT")
-	user := os.Getenv("USER")
-	dbname := os.Getenv("NAME")
-	dbpassword := os.Getenv("PASSWORD")
-
-	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s port=%s", host, user, dbname, dbpassword, dbPort)
-
-	return dialect, dbURI
+func (c *Conf) ConnStr() string {
+	return fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s port=%s",
+		c.HOST, c.USER, c.NAME, c.PASSWORD, c.DBPORT)
 }

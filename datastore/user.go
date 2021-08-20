@@ -12,9 +12,10 @@ func (c *Client) CreateUser(user models.User) error {
 	return nil
 }
 
-func (c *Client) GetUsers() (users []models.User, err error) {
+func (c *Client) GetUsers() ([]models.User, error) {
+	users := []models.User{}
 	if err := c.Db.Find(&users).Error; err != nil {
-		return nil, err
+		return users, err
 	}
 
 	return users, nil
@@ -22,8 +23,7 @@ func (c *Client) GetUsers() (users []models.User, err error) {
 
 func (c *Client) AuthenticateUser(usercred map[string]interface{}) (string, error) {
 	user := models.User{}
-	err := c.Db.Table("users").Where(usercred).First(&user).Error
-	if err != nil {
+	if err := c.Db.Table("users").Where(usercred).First(&user).Error; err != nil {
 		return "error occured", err
 	}
 

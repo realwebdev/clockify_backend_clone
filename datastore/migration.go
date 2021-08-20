@@ -2,18 +2,16 @@ package datastore
 
 import (
 	"log"
-
-	"github.com/jinzhu/gorm"
 )
 
-func AutoMigrate(modelObject interface{}, db *gorm.DB) error {
-	if err := db.DropTableIfExists(modelObject).Error; err != nil {
-		log.Print("Error occured While Deleting Previous Table")
-		return err
-	}
-	log.Print("Previous Table drop successfully")
+func (c *Client) AutoMigrate(modelObject interface{}) error {
+	// if err := c.Db.DropTableIfExists(modelObject).Error; err != nil {
+	// 	log.Print("Error occured While Deleting Previous Table")
+	// 	return err
+	// }
+	// log.Print("Previous Table drop successfully")
 
-	if err := db.AutoMigrate(modelObject).Error; err != nil {
+	if err := c.Db.AutoMigrate(modelObject); err != nil {
 		return err
 	}
 	log.Print("models created successfully")

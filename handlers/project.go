@@ -6,13 +6,20 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	"github.com/realwebdev/Bilal/clockify3/datastore"
+	"github.com/realwebdev/Bilal/clockify3/auth"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
-func CreateProject(db *gorm.DB) gin.HandlerFunc {
+func CreateProject(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		project := models.Project{}
 		if err := c.BindJSON(&project); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -21,7 +28,7 @@ func CreateProject(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		if err := datastore.CreateProject(project, db); err != nil {
+		if err := h.DB.CreateProject(project); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "error occured creating project",
 				"error":   err.Error()})
@@ -32,9 +39,17 @@ func CreateProject(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func GetProjects(db *gorm.DB) gin.HandlerFunc {
+func GetProjects(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		users, err := datastore.GetProjects(db)
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
+		users, err := h.DB.GetProjects()
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "Project list not found",
@@ -46,15 +61,23 @@ func GetProjects(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func UpdateProject(db *gorm.DB) gin.HandlerFunc {
+func UpdateProject(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 		update := c.PostForm("update")
 
 		updates := make(map[string]interface{})
 		updates["project_name"] = update
-		if err := datastore.UpdateProject(id, updates, db); err != nil {
+		if err := h.DB.UpdateProject(id, updates); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "The project does not exist in the database",
 				"error":   err.Error()})
@@ -65,12 +88,20 @@ func UpdateProject(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func DeleteProject(db *gorm.DB) gin.HandlerFunc {
+func DeleteProject(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := auth.TokenValidate(c.Request); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error in Authorizaition of JWT",
+				"error":   err,
+			})
+			return
+		}
+
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 
-		deleteproject, err := datastore.DeleteProject(id, db)
+		deleteproject, err := h.DB.DeleteProject(id)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "The project does not exist in the database",
