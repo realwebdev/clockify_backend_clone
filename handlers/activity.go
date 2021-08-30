@@ -6,13 +6,13 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/realwebdev/Bilal/clockify3/auth"
+	"github.com/realwebdev/Bilal/clockify3/middleware"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
 func StartActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -41,7 +41,7 @@ func StartActivity(h *Handler) gin.HandlerFunc {
 
 func EndActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -66,7 +66,7 @@ func EndActivity(h *Handler) gin.HandlerFunc {
 
 func DeleteActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -90,7 +90,7 @@ func DeleteActivity(h *Handler) gin.HandlerFunc {
 
 func UpdateActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,

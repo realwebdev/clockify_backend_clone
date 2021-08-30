@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/realwebdev/Bilal/clockify3/auth"
+	"github.com/realwebdev/Bilal/clockify3/middleware"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
@@ -17,7 +18,7 @@ type TokenResponse struct {
 
 func GetUsers(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -54,7 +55,21 @@ func CreateUser(h *Handler) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, fmt.Sprintf("User created %v", user.Username))
+		email := user.Email
+		pass := user.Password
+		usercred := make(map[string]interface{})
+		usercred["email"] = email
+		usercred["password"] = pass
+		username, err := h.DB.AuthenticateUser(usercred)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "user does not exist",
+				"error":   err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, fmt.Sprintf(`User Registered %v   `, user.Username))
+		c.JSON(http.StatusOK, fmt.Sprintf(`%v LoggedIn :-)`, username))
 	}
 }
 
@@ -104,7 +119,7 @@ func AuthenticateUser(h *Handler) gin.HandlerFunc {
 
 func DeleteUser(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,

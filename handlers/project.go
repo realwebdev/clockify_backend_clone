@@ -6,13 +6,13 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/realwebdev/Bilal/clockify3/auth"
+	"github.com/realwebdev/Bilal/clockify3/middleware"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
 func CreateProject(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -41,7 +41,7 @@ func CreateProject(h *Handler) gin.HandlerFunc {
 
 func GetProjects(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -63,7 +63,7 @@ func GetProjects(h *Handler) gin.HandlerFunc {
 
 func UpdateProject(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,
@@ -90,7 +90,7 @@ func UpdateProject(h *Handler) gin.HandlerFunc {
 
 func DeleteProject(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := auth.TokenValidate(c.Request); err != nil {
+		if err := middleware.AuthenticateToken(c.Request); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error in Authorizaition of JWT",
 				"error":   err,

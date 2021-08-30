@@ -28,5 +28,7 @@ func SetupRouter(handler *handlers.Handler) *gin.Engine {
 	router.POST("/updateactivity", handlers.UpdateActivity(handler))
 	router.DELETE("/deleteactivity", handlers.DeleteActivity(handler))
 
+	// router.GET("/isAuthenticated", handlers.DeleteActivity(handler))
+
 	return router
 }
