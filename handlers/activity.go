@@ -6,20 +6,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/realwebdev/Bilal/clockify3/middleware"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
 func StartActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := middleware.AuthenticateToken(c.Request); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Error in Authorizaition of JWT",
-				"error":   err,
-			})
-			return
-		}
-
 		activity := models.Activity{}
 		if err := c.BindJSON(&activity); err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -41,14 +32,6 @@ func StartActivity(h *Handler) gin.HandlerFunc {
 
 func EndActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := middleware.AuthenticateToken(c.Request); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Error in Authorizaition of JWT",
-				"error":   err,
-			})
-			return
-		}
-
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 64)
 		id := uint(uintt)
 
@@ -66,14 +49,6 @@ func EndActivity(h *Handler) gin.HandlerFunc {
 
 func DeleteActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := middleware.AuthenticateToken(c.Request); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Error in Authorizaition of JWT",
-				"error":   err,
-			})
-			return
-		}
-
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 
@@ -90,14 +65,6 @@ func DeleteActivity(h *Handler) gin.HandlerFunc {
 
 func UpdateActivity(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := middleware.AuthenticateToken(c.Request); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Error in Authorizaition of JWT",
-				"error":   err,
-			})
-			return
-		}
-
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 		new_name := c.PostForm("newname")

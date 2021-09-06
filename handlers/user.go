@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/realwebdev/Bilal/clockify3/auth"
-	"github.com/realwebdev/Bilal/clockify3/middleware"
 	"github.com/realwebdev/Bilal/clockify3/models"
 )
 
@@ -18,14 +17,6 @@ type TokenResponse struct {
 
 func GetUsers(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := middleware.AuthenticateToken(c.Request); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Error in Authorizaition of JWT",
-				"error":   err,
-			})
-			return
-		}
-
 		users, err := h.DB.GetUsers()
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -119,14 +110,6 @@ func AuthenticateUser(h *Handler) gin.HandlerFunc {
 
 func DeleteUser(h *Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := middleware.AuthenticateToken(c.Request); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Error in Authorizaition of JWT",
-				"error":   err,
-			})
-			return
-		}
-
 		uintt, _ := strconv.ParseUint(c.PostForm("id"), 10, 32)
 		id := uint(uintt)
 
